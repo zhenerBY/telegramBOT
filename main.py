@@ -1,6 +1,6 @@
 import os
 import time
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 from bot import Bot
 
@@ -10,8 +10,9 @@ from bot import Bot
 token = '2088243121:AAFnJa3Xau3z5hbJzatAy2nlGi-a15XnFPY'
 bot = Bot(token)
 
-while True:
-    message = bot.get_message()
-    if message is not None:
-        bot.send_message(message['chat_id'], message['text'])
-    time.sleep(5)
+if __name__ == '__main__':
+    while True:
+        message = bot.get_message()
+        if message is not None:
+            bot.send_message(message['chat_id'], message['text'])
+        time.sleep(5)

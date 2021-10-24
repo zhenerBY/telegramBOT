@@ -47,10 +47,10 @@ class Bot:
                 text = last_update['message']['text']
             except KeyError:
                 return None
-        if '/help' in text:
+        if '/help' == text[:5]:
             param = text.split(' ', maxsplit=1)[1].strip() if len(text.split()) > 1 else None
             text = f'Мы были рады Вам помочь! Параметр - "{param}"'
-        if '/curr' in text:
+        if '/curr' == text[:5]:
             param = text.split(' ', maxsplit=1)[1].strip() if len(text.split()) > 1 else None
             if param:
                 if Rates.check(param):
@@ -59,7 +59,7 @@ class Bot:
                 else:
                     text =f'Курса для валюты "{param}" на NBRB.BY нет.'
             else:
-                text = 'Укажите запрос в виде "/curr EUR")'
+                text = 'Списко всех доступных валют \n \n' + Rates.all_currencies()
         return {"chat_id": chat_id, "text": text}
 
     def send_message(self, chat_id, text):
