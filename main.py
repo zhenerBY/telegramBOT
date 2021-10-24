@@ -15,4 +15,4 @@ if __name__ == '__main__':
         message = bot.get_message()
         if message is not None:
             bot.send_message(message['chat_id'], message['text'])
-        time.sleep(1)
+        time.sleep(5)
