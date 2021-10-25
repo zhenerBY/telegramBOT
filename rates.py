@@ -25,22 +25,29 @@ class Rates():
             return False
 
     @classmethod
-    def all_currencies(cls) -> list:
-        params = {'periodicity': '1'}
-        listcurr = []
-        if requests.get(cls.HOST_RATES, params=params).status_code == 200:
-            response = requests.get(cls.HOST_RATES, params=params)
-            json_response = response.json()
-            responsename = requests.get(cls.HOST_CURRENCIES)
-            json_responsename = responsename.json()
-            for item in json_response:
-                for item2 in json_responsename:
-                    if item['Cur_ID'] == item2['Cur_ID']:
-                        listcurr.append([item2['Cur_Name'], item2['Cur_Abbreviation']])
-            textlistcurr = ''
-            for item in listcurr:
-                textlistcurr += item[0] + ' - ' + item[1] + '\n'
+    def all_currencies(cls) -> str:
+        listcurr = Rates.all_currencies_list()
+        textlistcurr = ''
+        for item in listcurr:
+            textlistcurr += item[0] + ' - ' + item[1] + '\n'
         return textlistcurr
+
+    @classmethod
+    def all_currencies_list(cls) -> list:
+        paramslist = [{'periodicity': '0'}, {'periodicity': '1'}]
+        listcurr = []
+        for params in paramslist:
+            if requests.get(cls.HOST_RATES, params=params).status_code == 200:
+                response = requests.get(cls.HOST_RATES, params=params)
+                json_response = response.json()
+                responsename = requests.get(cls.HOST_CURRENCIES)
+                json_responsename = responsename.json()
+                for item in json_response:
+                    for item2 in json_responsename:
+                        if item['Cur_ID'] == item2['Cur_ID']:
+                            listcurr.append([item2['Cur_Name'], item2['Cur_Abbreviation']])
+        return sorted(listcurr)
+
 
     def text(self):
         text = 'Аббревиатура: ' + self.cur_abb + '\n'
