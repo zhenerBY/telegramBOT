@@ -11,7 +11,7 @@ class Bot:
 
 
     def get_updates(self):
-        params = {'offset':90}
+        params = {'offset':-90}
         req = requests.get(f'{self.url}/getUpdates', params=params)
         json_data = req.json()
         if not json_data['ok']:
