@@ -37,11 +37,11 @@ class Bot:
             return None
         if 'error' in last_update:
             raise ValueError('Non valid update')
-        try:
-            chat_id = last_update[list(last_update.keys())[1]]['chat']['id'] #выше нельзя. Надо возвращать None
-        except Exception as _ex:
-            print(_ex)
-            return None
+        # try:
+        #     chat_id = last_update[list(last_update.keys())[1]]['chat']['id'] #выше нельзя. Надо возвращать None.
+        # except Exception as _ex:
+        #     print(_ex)
+        #     return None
         if 'message' not in last_update.keys(): #проверка на Тип
             return None
         elif 'sticker' in last_update['message'].keys():
@@ -51,6 +51,7 @@ class Bot:
                 text = last_update['message']['text']
             except KeyError:
                 return None
+        chat_id = last_update[list(last_update.keys())[1]]['chat']['id']  # выше нельзя. Надо возвращать No
         if '/help' == text[:5]:
             param = text.split(' ', maxsplit=1)[1].strip() if len(text.split()) > 1 else None
             text = f'Мы были рады Вам помочь! Параметр - "{param}"'
