@@ -9,12 +9,11 @@ class Rates():
         if Rates.check(cur):
             data = requests.get(Rates.HOST_RATES + cur, params={'parammode': 2})
             json_data = data.json()
-            # print(json_data)
             self.cur_id = json_data['Cur_ID']
             self.cur_abb = json_data['Cur_Abbreviation']
             self.cur_name = json_data['Cur_Name']
             self.rate = json_data['Cur_OfficialRate']
-            self.date = json_data['Date']
+            self.date = json_data['Date'][:10]
             self.scale = json_data['Cur_Scale']
 
     @classmethod
@@ -48,9 +47,16 @@ class Rates():
                             listcurr.append([item2['Cur_Name'], item2['Cur_Abbreviation']])
         return sorted(listcurr)
 
+    @classmethod
+    def all_currencies_abblist(cls) -> list:
+        currlist = Rates.all_currencies_list()
+        currlist2 = []
+        for item in currlist:
+            currlist2.append(item[1])
+        return currlist2
 
     def text(self):
         text = 'Аббревиатура: ' + self.cur_abb + '\n'
-        text += str(self.scale) + ' ' + self.cur_name + ' = ' + str(self.rate) + ' BYN'  + '\n'
+        text += str(self.scale) + ' ' + self.cur_name + ' = ' + str(self.rate) + ' BYN' + '\n'
         text += 'Дата : ' + self.date
         return text
