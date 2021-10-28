@@ -2,6 +2,7 @@ import requests
 from rates import Rates
 import json
 
+
 class Bot:
     telegram_api_url = f"https://api.telegram.org/bot"
 
@@ -10,15 +11,13 @@ class Bot:
         self.url = f'{self.telegram_api_url}{self.token}'
         self.last_update_id = None
 
-
     def get_updates(self):
-        params = {'offset':-90}
+        params = {'offset': -90}
         req = requests.get(f'{self.url}/getUpdates', params=params)
         json_data = req.json()
         if not json_data['ok']:
             return {"error": json_data['description']}
         return json_data['result']
-
 
     def get_last_update(self):
         updates = self.get_updates()
@@ -32,7 +31,9 @@ class Bot:
         return last_update
 
     def get_message(self, last_update):
-        last_update = last_update
+        text = ''
+        responsetext = ''
+        # last_update = last_update
         print(last_update)
         if 'error' in last_update:
             raise ValueError('Non valid update')
@@ -40,41 +41,62 @@ class Bot:
             text = 'Смайл стекера : ' + last_update['message']['sticker']['emoji']
         else:
             try:
-                text = last_update['message']['text']
+                responsetext = last_update['message']['text']
             except KeyError:
                 return None
         chat_id = last_update[list(last_update.keys())[1]]['chat']['id']  # выше нельзя. Надо возвращать No
-        if '/help' == text[:5]:
+        if '/help' == responsetext[:5]:
             param = text.split(' ', maxsplit=1)[1].strip() if len(text.split()) > 1 else None
-            text = f'Мы были рады Вам помочь! Параметр - "{param}"'
-        elif '/curr' == text[:5]:
+            if param:
+                text = f'Мы были рады Вам помочь! Параметр - "{param}"'
+            else:
+                keyboard = [[{'text': 'Улыбнись 🤓'}, {'text': 'Узнать курсы валют'}, {'text': 'Удалить клавитуру'}]]
+                reply_markup = {'keyboard': keyboard, 'resize_keyboard': True, 'one_time_keyboard': False}
+                reply_markup = json.dumps(reply_markup)
+                params = {'chat_id': chat_id, 'text': 'Вы можете выбрать следующие опции', "reply_markup": reply_markup}
+                requests.get(url=self.url + '/sendMessage', params=params)
+        elif '/curr' == responsetext[:5] or 'Узнать курсы валют' == responsetext:
             param = text.split(' ', maxsplit=1)[1].strip() if len(text.split()) > 1 else None
             if param:
                 if Rates.check(param):
                     curr = Rates(param)
                     text = curr.text()
                 else:
-                    text =f'Курса для валюты "{param}" на NBRB.BY нет.'
+                    text = f'Курса для валюты "{param}" на NBRB.BY нет.'
             else:
                 # text = 'Список всех доступных валют \n \n' + Rates.all_currencies()
-                buttons = [[{'text': 'Долар США', 'callback_data': 'USD'}, {'text': 'Евро', 'callback_data': 'EUR'},
-                            {'text': 'Российский рубль', 'callback_data': 'RUB'}],
-                           [{'text': 'Показать все доступные валюты', 'callback_data': 'showall'}]]
+                buttons = [
+                    [{'text': 'Долар США', 'callback_data': 'USD'},
+                     {'text': 'Евро', 'callback_data': 'EUR'},
+                     {'text': 'Российский рубль', 'callback_data': 'RUB'}],
+                    [{'text': 'Показать все доступные валюты', 'callback_data': 'showall'}]
+                ]
                 reply_markup = {'inline_keyboard': buttons}
                 reply_markup = json.dumps(reply_markup)
                 params = {'chat_id': chat_id, 'text': 'Выберите валюту', "reply_markup": reply_markup}
                 requests.get(url=self.url + '/sendMessage', params=params)
                 return None
-        return {"chat_id": chat_id, "text": text}
+        elif 'Удалить клавитуру' == responsetext:
+            self.remove_keyboard(chat_id)
+        elif 'привет' == responsetext.lower():
+            user = last_update['message']['from']
+            if 'username' in user.keys():
+                name = user['username']
+            elif 'last_name' in user.keys():
+                name = user['first_name'] + ' ' + user['last_name']
+            else:
+                name = user['first_name']
+            text = f'Привет {name}!'
+        if text == '':
+            return None
+        else:
+            params = {"chat_id": chat_id, "text": text}
+            return params
 
-    def send_message(self, chat_id, text):
-        text = text
-        params = {'chat_id':chat_id, 'text':text}
-        req = requests.get(url=self.url+'/sendMessage', params=params)
-        print(text)
+    def send(self, method, params):
+        req = requests.get(url=self.url + method, params=params)
         if not req.json()['ok']:
             return {"error": req['description']}
-        return req.json()
 
     def callback_query(self, last_update):
         message_id = last_update['callback_query']['message']['message_id']
@@ -82,7 +104,7 @@ class Bot:
         data = last_update['callback_query']['data']
         print('data', data)
         if data == 'showall':
-            #формируем кнопки
+            # формируем кнопки
             listcurr = Rates.all_currencies_list()
             buttons = []
             buttonsrow = []
@@ -110,3 +132,9 @@ class Bot:
             params = {'chat_id': chat_id, 'message_id': message_id, 'text': text,
                       'reply_markup': reply_markup}
             requests.get(url=self.url + '/editMessageText', params=params)
+
+    def remove_keyboard(self, chat_id):
+        reply_markup = {'remove_keyboard': True}
+        reply_markup = json.dumps(reply_markup)
+        params = {'chat_id': chat_id, 'text': 'Квалиатура удалена', "reply_markup": reply_markup}
+        requests.get(url=self.url + '/sendMessage', params=params)
