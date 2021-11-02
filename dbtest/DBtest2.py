@@ -2,11 +2,11 @@ from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-HOST = 'ec2-23-23-199-57.compute-1.amazonaws.com'
-USERNAME = 'bdixfxblwpkpeq'
-DATBASE = 'd92n7id44085nq'
+HOST = 'ec2-34-197-135-44.compute-1.amazonaws.com'
+USERNAME = 'emlftjtatnyzpt'
+DATBASE = 'd5ps6u4quumv6b'
 PORT = '5432'
-PASSWORD = '3ab0b9eb1c88515244539d0b2e04c6d269ea4cd4e2bada888646be761598bfec'
+PASSWORD = '0ff55cfd0fd0f6022a2e78e8b0692ee75345045a50a85b452b241c5c3b90d4a0'
 
 engine = create_engine(f'postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATBASE}')
 
@@ -44,6 +44,7 @@ class User2(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(200))
     fullname = Column(String(200))
+    fullname2 = Column(String(200))
     password = Column(String(200))
 
     def __init__(self, name, fullname, password):

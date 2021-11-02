@@ -3,11 +3,11 @@ from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, 
 from datetime import datetime
 
 
-HOST = 'ec2-23-23-199-57.compute-1.amazonaws.com'
-USERNAME = 'bdixfxblwpkpeq'
-DATBASE = 'd92n7id44085nq'
+HOST = 'ec2-34-197-135-44.compute-1.amazonaws.com'
+USERNAME = 'emlftjtatnyzpt'
+DATBASE = 'd5ps6u4quumv6b'
 PORT = '5432'
-PASSWORD = '3ab0b9eb1c88515244539d0b2e04c6d269ea4cd4e2bada888646be761598bfec'
+PASSWORD = '0ff55cfd0fd0f6022a2e78e8b0692ee75345045a50a85b452b241c5c3b90d4a0'
 
 metadata = MetaData()
 
