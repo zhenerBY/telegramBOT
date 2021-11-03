@@ -8,7 +8,7 @@ DATBASE = 'd5ps6u4quumv6b'
 PORT = '5432'
 PASSWORD = '0ff55cfd0fd0f6022a2e78e8b0692ee75345045a50a85b452b241c5c3b90d4a0'
 
-engine = create_engine(f'postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATBASE}')
+engine = create_engine(f'postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATBASE}', echo = True)
 
 # metadata = MetaData()
 # users_table = Table('users', metadata,
@@ -59,3 +59,10 @@ Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
 session = Session()
+
+# session.add(User('vasia','Vasiliy Pypkin','vasia2000'))
+# session.commit()
+
+
+# session.query(User).filter(User.name.in_(['vasia'])).all()
+# session.query(User).filter(User.name.is)
