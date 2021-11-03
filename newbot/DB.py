@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 
+
 HOST = 'ec2-34-197-135-44.compute-1.amazonaws.com'
 USERNAME = 'emlftjtatnyzpt'
 DATBASE = 'd5ps6u4quumv6b'
@@ -23,7 +24,7 @@ class UpdateDate(Base):
         self.date = date
 
     def __repr__(self):
-        return "<User('%s')>" % (self.date)
+        return "<UpdateDate('%s')>" % (self.date)
 
 
 class CurrenciesList(Base):
@@ -39,7 +40,7 @@ class CurrenciesList(Base):
         self.cur_abbreviation = cur_abbreviation
 
     def __repr__(self):
-        return "<User('%s','%s', '%s')>" % (self.cur_id, self.cur_name, self.cur_abbreviation)
+        return "<CurrenciesList('%s','%s', '%s')>" % (self.cur_id, self.cur_name, self.cur_abbreviation)
 
 
 class RatesList(Base):
@@ -58,7 +59,7 @@ class RatesList(Base):
         self.cur_date = cur_date
 
     def __repr__(self):
-        return "<User('%s', '%s', '%s', '%s')>" % (self.cur_id, self.cur_scale, self.cur_rate, self.cur_date)
+        return "<RatesList('%s', '%s', '%s', '%s')>" % (self.cur_id, self.cur_scale, self.cur_rate, self.cur_date)
 
 
 Base.metadata.create_all(engine)
