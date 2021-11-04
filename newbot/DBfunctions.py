@@ -41,10 +41,26 @@ def db_currencies_list() -> list:
     return sorted(currencies_list)
 
 
-def db_text(abbreviation:str) -> str:
-    currency = session.query(RatesList).filter(RatesList.сurrency.cur_abbreviation == abbreviation).first()
-    # text = 'Аббревиатура: ' + currency.cur_abbreviation + '\n'
-    # text += str(self.scale) + ' ' + self.cur_name + ' = ' + str(self.rate) + ' BYN' + '\n'
-    # text += 'Дата : ' + self.date
-    # return text
-    return currency
+def db_text(abbreviation: str) -> str:
+    # currency = session.query(RatesList).filter(RatesList.сurrency.cur_abbreviation == abbreviation).first()
+    responce = session.query(CurrenciesList, RatesList).join(RatesList).filter(
+        CurrenciesList.cur_abbreviation == abbreviation).filter(RatesList.cur_date == datetime.now().date()).all()
+    currency = responce[0][0]
+    rate = responce[0][1]
+    text = 'Аббревиатура: ' + currency.cur_abbreviation + '\n'
+    text += str(rate.cur_scale) + ' ' + currency.cur_name + ' = ' + str(rate.cur_rate) + ' BYN' + '\n'
+    text += 'Дата : ' + rate.cur_date.isoformat()
+    return text
+    # return currency
+
+
+def db_add_rate(abbreviation: str) -> None:
+    db_currencieslist_upp()
+    if Rates.check(abbreviation):
+        curr = Rates(abbreviation)
+        responce = session.query(CurrenciesList).filter(CurrenciesList.cur_abbreviation == abbreviation).all()[0]
+        record = RatesList(responce.id, curr.scale, curr.rate)
+        session.add(record)
+        session.commit()
+    else:
+        print('Курс не найден. Добавление невозможно.')
