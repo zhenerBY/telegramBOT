@@ -18,6 +18,7 @@ class Rates():
 
     @classmethod
     def check(cls, cur: str) -> bool:
+        print(cur)
         if cur == cur[:3]:
             if requests.get(cls.HOST_RATES + cur, params={'parammode': 2}).status_code == 200:
                 return True

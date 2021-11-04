@@ -14,11 +14,12 @@ session = Session()
 
 def db_currencieslist_upp():
     updatedate = session.query(UpdateDate).first()
-    print(updatedate)
+    # print(updatedate)
     if updatedate.date == datetime.now().date() and session.query(CurrenciesList).first() is not None:
-        print('Таблицу не меняеем')
+        pass
+        # print('Таблицу не меняеем')
     else:
-        print('Таблицу меняем')
+        # print('Таблицу меняем')
         updatedate.date = datetime.now().date()
         currencies = session.query(CurrenciesList).all()
         for item in Rates.all_currencies_dictlist():
@@ -34,6 +35,7 @@ def db_currencieslist_upp():
 
 
 def db_currencies_list() -> list:
+    db_currencieslist_upp()
     table = session.query(CurrenciesList).all()
     currencies_list = []
     for item in table:
@@ -41,7 +43,15 @@ def db_currencies_list() -> list:
     return sorted(currencies_list)
 
 
+def db_all_currencies_abblist() -> list:
+    currencies_list = []
+    for item in db_currencies_list():
+        currencies_list.append(item[1])
+    return sorted(currencies_list)
+
+
 def db_text(abbreviation: str) -> str:
+    db_currencieslist_upp()
     # currency = session.query(RatesList).filter(RatesList.сurrency.cur_abbreviation == abbreviation).first()
     responce = session.query(CurrenciesList, RatesList).join(RatesList).filter(
         CurrenciesList.cur_abbreviation == abbreviation).filter(RatesList.cur_date == datetime.now().date()).all()
