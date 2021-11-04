@@ -52,6 +52,14 @@ def db_all_currencies_abblist() -> list:
 
 def db_text(abbreviation: str) -> str:
     db_currencieslist_upp()
+    # проверка на существование записи
+    if session.query(CurrenciesList, RatesList).join(RatesList).filter(
+            CurrenciesList.cur_abbreviation == abbreviation).filter(
+        RatesList.cur_date == datetime.now().date()).first() is None:
+        db_add_rate()
+        print('Запрашиваем курсы из API')
+    else:
+        print('Запрашиваем курсы из БД')
     # currency = session.query(RatesList).filter(RatesList.сurrency.cur_abbreviation == abbreviation).first()
     responce = session.query(CurrenciesList, RatesList).join(RatesList).filter(
         CurrenciesList.cur_abbreviation == abbreviation).filter(RatesList.cur_date == datetime.now().date()).all()
@@ -74,3 +82,10 @@ def db_add_rate(abbreviation: str) -> None:
         session.commit()
     else:
         print('Курс не найден. Добавление невозможно.')
+
+
+def db_check(abbreviation: str) -> bool:
+    if abbreviation in db_all_currencies_abblist():
+        return True
+    else:
+        return False
