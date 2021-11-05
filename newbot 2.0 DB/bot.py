@@ -2,7 +2,6 @@ import requests
 from rates import Rates
 import json
 
-#DB
 from DBfunctions import db_text, db_currencies_list, db_all_currencies_abblist, db_check
 
 
@@ -36,8 +35,7 @@ class Bot:
     def get_message(self, last_update):
         text = ''
         responsetext = ''
-        # last_update = last_update
-        print(last_update)
+        print('last update', last_update)
         if 'error' in last_update:
             raise ValueError('Non valid update')
         elif 'sticker' in last_update['message'].keys():
@@ -61,13 +59,7 @@ class Bot:
         elif '/curr' == responsetext[:5] or 'Узнать курсы валют' == responsetext:
             param = text.split(' ', maxsplit=1)[1].strip() if len(text.split()) > 1 else None
             if param:
-                # DB надо добавить функци в bd
-                # if Rates.check(param):
                 if db_check(param):
-                # DB
-                    # curr = Rates(param)
-                    # text = curr.text()
-                    # DB
                     text = db_text(param)
                 else:
                     text = f'Курса для валюты "{param}" на NBRB.BY нет.'
@@ -112,11 +104,7 @@ class Bot:
         data = last_update['callback_query']['data']
         print('data', data)
         if data == 'showall':
-            # формируем кнопки
-            # listcurr = Rates.all_currencies_list()
-            # DB
             listcurr = db_currencies_list()
-            # DB
             buttons = []
             buttonsrow = []
             for i, item in enumerate(listcurr):
@@ -133,13 +121,8 @@ class Bot:
                       'reply_markup': reply_markup}
             requests.get(url=self.url + '/editMessageText', params=params)
         # elif data in Rates.all_currencies_abblist():
-        # DB
         elif data in db_all_currencies_abblist():
-            # curr = Rates(data)
-            # text = curr.text()
-            # DB
             text = db_text(data)
-            # DB
             buttons = [[{'text': 'Долар США', 'callback_data': 'USD'}, {'text': 'Евро', 'callback_data': 'EUR'},
                         {'text': 'Российский рубль', 'callback_data': 'RUB'}],
                        [{'text': 'Показать все доступные валюты', 'callback_data': 'showall'}]]

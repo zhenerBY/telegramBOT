@@ -14,7 +14,6 @@ session = Session()
 
 def db_currencieslist_upp():
     updatedate = session.query(UpdateDate).first()
-    # print(updatedate)
     if updatedate.date == datetime.now().date() and session.query(CurrenciesList).first() is not None:
         pass
         # print('Таблицу не меняеем')
@@ -58,13 +57,12 @@ def db_text(abbreviation: str) -> str:
             CurrenciesList.cur_abbreviation == abbreviation).filter(
         RatesList.cur_date == datetime.now().date()).first() is None:
         print('Запрашиваем курсы из API')
-        if Rates.check():
-            db_add_rate()
+        if Rates.check(abbreviation):
+            db_add_rate(abbreviation)
         else:
             return 'Отсутсвует связь с API nbrb.by'
     else:
         print('Запрашиваем курсы из БД')
-    # currency = session.query(RatesList).filter(RatesList.сurrency.cur_abbreviation == abbreviation).first()
     responce = session.query(CurrenciesList, RatesList).join(RatesList).filter(
         CurrenciesList.cur_abbreviation == abbreviation).filter(RatesList.cur_date == datetime.now().date()).all()
     currency = responce[0][0]
@@ -73,7 +71,6 @@ def db_text(abbreviation: str) -> str:
     text += str(rate.cur_scale) + ' ' + currency.cur_name + ' = ' + str(rate.cur_rate) + ' BYN' + '\n'
     text += 'Дата : ' + rate.cur_date.isoformat()
     return text
-    # return currency
 
 
 def db_add_rate(abbreviation: str) -> None:

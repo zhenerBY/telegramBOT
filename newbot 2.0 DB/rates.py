@@ -18,7 +18,6 @@ class Rates():
 
     @classmethod
     def check(cls, cur: str) -> bool:
-        print(cur)
         if cur == cur[:3]:
             if requests.get(cls.HOST_RATES + cur, params={'parammode': 2}).status_code == 200:
                 return True
@@ -27,29 +26,31 @@ class Rates():
         else:
             return False
 
-    @classmethod
-    def all_currencies(cls) -> str:
-        listcurr = Rates.all_currencies_list()
-        textlistcurr = ''
-        for item in listcurr:
-            textlistcurr += item[0] + ' - ' + item[1] + '\n'
-        return textlistcurr
+    # закоменченне классы не нужны для работы с БД
 
-    @classmethod
-    def all_currencies_list(cls) -> list:
-        paramslist = [{'periodicity': '0'}, {'periodicity': '1'}]
-        listcurr = []
-        for params in paramslist:
-            if requests.get(cls.HOST_RATES, params=params).status_code == 200:
-                response = requests.get(cls.HOST_RATES, params=params)
-                json_response = response.json()
-                responsename = requests.get(cls.HOST_CURRENCIES)
-                json_responsename = responsename.json()
-                for item in json_response:
-                    for item2 in json_responsename:
-                        if item['Cur_ID'] == item2['Cur_ID']:
-                            listcurr.append([item2['Cur_Name'], item2['Cur_Abbreviation']])
-        return sorted(listcurr)
+    # @classmethod
+    # def all_currencies(cls) -> str:
+    #     listcurr = Rates.all_currencies_list()
+    #     textlistcurr = ''
+    #     for item in listcurr:
+    #         textlistcurr += item[0] + ' - ' + item[1] + '\n'
+    #     return textlistcurr
+
+    # @classmethod
+    # def all_currencies_list(cls) -> list:
+    #     paramslist = [{'periodicity': '0'}, {'periodicity': '1'}]
+    #     listcurr = []
+    #     for params in paramslist:
+    #         if requests.get(cls.HOST_RATES, params=params).status_code == 200:
+    #             response = requests.get(cls.HOST_RATES, params=params)
+    #             json_response = response.json()
+    #             responsename = requests.get(cls.HOST_CURRENCIES)
+    #             json_responsename = responsename.json()
+    #             for item in json_response:
+    #                 for item2 in json_responsename:
+    #                     if item['Cur_ID'] == item2['Cur_ID']:
+    #                         listcurr.append([item2['Cur_Name'], item2['Cur_Abbreviation']])
+    #     return sorted(listcurr)
 
     #для базы данных - возвращает список словарей
     @classmethod
@@ -72,16 +73,16 @@ class Rates():
                             listcurr.append(tempdict)
         return listcurr
 
-    @classmethod
-    def all_currencies_abblist(cls) -> list:
-        currlist = Rates.all_currencies_list()
-        currlist2 = []
-        for item in currlist:
-            currlist2.append(item[1])
-        return currlist2
+    # @classmethod
+    # def all_currencies_abblist(cls) -> list:
+    #     currlist = Rates.all_currencies_list()
+    #     currlist2 = []
+    #     for item in currlist:
+    #         currlist2.append(item[1])
+    #     return currlist2
 
-    def text(self):
-        text = 'Аббревиатура: ' + self.cur_abb + '\n'
-        text += str(self.scale) + ' ' + self.cur_name + ' = ' + str(self.rate) + ' BYN' + '\n'
-        text += 'Дата : ' + self.date
-        return text
+    # def text(self):
+    #     text = 'Аббревиатура: ' + self.cur_abb + '\n'
+    #     text += str(self.scale) + ' ' + self.cur_name + ' = ' + str(self.rate) + ' BYN' + '\n'
+    #     text += 'Дата : ' + self.date
+    #     return text
