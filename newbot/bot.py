@@ -53,7 +53,7 @@ class Bot:
             if param:
                 text = f'Мы были рады Вам помочь! Параметр - "{param}"'
             else:
-                keyboard = [[{'text': 'Улыбнись 🤓'}, {'text': 'Узнать курсы валют'}, {'text': 'Удалить клавитуру'}]]
+                keyboard = [[{'text': 'Улыбнись 🤓'}, {'text': 'Узнать курсы валют'}, {'text': 'Удалить клавиатуру'}]]
                 reply_markup = {'keyboard': keyboard, 'resize_keyboard': True, 'one_time_keyboard': False}
                 reply_markup = json.dumps(reply_markup)
                 params = {'chat_id': chat_id, 'text': 'Вы можете выбрать следующие опции', "reply_markup": reply_markup}
@@ -84,7 +84,7 @@ class Bot:
                 params = {'chat_id': chat_id, 'text': 'Выберите валюту', "reply_markup": reply_markup}
                 requests.get(url=self.url + '/sendMessage', params=params)
                 return None
-        elif 'Удалить клавитуру' == responsetext:
+        elif 'Удалить клавиатуру' == responsetext:
             self.remove_keyboard(chat_id)
         elif 'привет' == responsetext.lower():
             user = last_update['message']['from']
@@ -152,5 +152,5 @@ class Bot:
     def remove_keyboard(self, chat_id):
         reply_markup = {'remove_keyboard': True}
         reply_markup = json.dumps(reply_markup)
-        params = {'chat_id': chat_id, 'text': 'Квалиатура удалена', "reply_markup": reply_markup}
+        params = {'chat_id': chat_id, 'text': 'Клавиатура удалена', "reply_markup": reply_markup}
         requests.get(url=self.url + '/sendMessage', params=params)
