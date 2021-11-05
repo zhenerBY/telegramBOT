@@ -2,8 +2,6 @@ import requests
 from rates import Rates
 import json
 
-from DBfunctions import db_text, db_currencies_list, db_all_currencies_abblist, db_check
-
 
 class Bot:
     telegram_api_url = f"https://api.telegram.org/bot"
@@ -35,7 +33,8 @@ class Bot:
     def get_message(self, last_update):
         text = ''
         responsetext = ''
-        print('last update', last_update)
+        # last_update = last_update
+        print(last_update)
         if 'error' in last_update:
             raise ValueError('Non valid update')
         elif 'sticker' in last_update['message'].keys():
@@ -51,7 +50,7 @@ class Bot:
             if param:
                 text = f'Мы были рады Вам помочь! Параметр - "{param}"'
             else:
-                keyboard = [[{'text': 'Улыбнись 🤓'}, {'text': 'Узнать курсы валют'}, {'text': 'Удалить клавиатуру'}]]
+                keyboard = [[{'text': 'Улыбнись 🤓'}, {'text': 'Узнать курсы валют'}, {'text': 'Удалить клавитуру'}]]
                 reply_markup = {'keyboard': keyboard, 'resize_keyboard': True, 'one_time_keyboard': False}
                 reply_markup = json.dumps(reply_markup)
                 params = {'chat_id': chat_id, 'text': 'Вы можете выбрать следующие опции', "reply_markup": reply_markup}
@@ -59,8 +58,9 @@ class Bot:
         elif '/curr' == responsetext[:5] or 'Узнать курсы валют' == responsetext:
             param = text.split(' ', maxsplit=1)[1].strip() if len(text.split()) > 1 else None
             if param:
-                if db_check(param):
-                    text = db_text(param)
+                if Rates.check(param):
+                    curr = Rates(param)
+                    text = curr.text()
                 else:
                     text = f'Курса для валюты "{param}" на NBRB.BY нет.'
             else:
@@ -76,7 +76,7 @@ class Bot:
                 params = {'chat_id': chat_id, 'text': 'Выберите валюту', "reply_markup": reply_markup}
                 requests.get(url=self.url + '/sendMessage', params=params)
                 return None
-        elif 'Удалить клавиатуру' == responsetext:
+        elif 'Удалить клавитуру' == responsetext:
             self.remove_keyboard(chat_id)
         elif 'привет' == responsetext.lower():
             user = last_update['message']['from']
@@ -104,7 +104,8 @@ class Bot:
         data = last_update['callback_query']['data']
         print('data', data)
         if data == 'showall':
-            listcurr = db_currencies_list()
+            # формируем кнопки
+            listcurr = Rates.all_currencies_list()
             buttons = []
             buttonsrow = []
             for i, item in enumerate(listcurr):
@@ -120,9 +121,9 @@ class Bot:
             params = {'chat_id': chat_id, 'message_id': message_id, 'text': 'Выберите валюту',
                       'reply_markup': reply_markup}
             requests.get(url=self.url + '/editMessageText', params=params)
-        # elif data in Rates.all_currencies_abblist():
-        elif data in db_all_currencies_abblist():
-            text = db_text(data)
+        elif data in Rates.all_currencies_abblist():
+            curr = Rates(data)
+            text = curr.text()
             buttons = [[{'text': 'Долар США', 'callback_data': 'USD'}, {'text': 'Евро', 'callback_data': 'EUR'},
                         {'text': 'Российский рубль', 'callback_data': 'RUB'}],
                        [{'text': 'Показать все доступные валюты', 'callback_data': 'showall'}]]
@@ -135,5 +136,5 @@ class Bot:
     def remove_keyboard(self, chat_id):
         reply_markup = {'remove_keyboard': True}
         reply_markup = json.dumps(reply_markup)
-        params = {'chat_id': chat_id, 'text': 'Клавиатура удалена', "reply_markup": reply_markup}
+        params = {'chat_id': chat_id, 'text': 'Квалиатура удалена', "reply_markup": reply_markup}
         requests.get(url=self.url + '/sendMessage', params=params)
