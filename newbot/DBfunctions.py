@@ -20,6 +20,7 @@ def db_currencieslist_upp():
         # print('Таблицу не меняеем')
     else:
         # print('Таблицу меняем')
+        print('Запрос в API списка всех валют')
         updatedate.date = datetime.now().date()
         currencies = session.query(CurrenciesList).all()
         for item in Rates.all_currencies_dictlist():
