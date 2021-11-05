@@ -57,8 +57,11 @@ def db_text(abbreviation: str) -> str:
     if session.query(CurrenciesList, RatesList).join(RatesList).filter(
             CurrenciesList.cur_abbreviation == abbreviation).filter(
         RatesList.cur_date == datetime.now().date()).first() is None:
-        db_add_rate()
         print('Запрашиваем курсы из API')
+        if Rates.check():
+            db_add_rate()
+        else:
+            return 'Отсутсвует связь с API nbrb.by'
     else:
         print('Запрашиваем курсы из БД')
     # currency = session.query(RatesList).filter(RatesList.сurrency.cur_abbreviation == abbreviation).first()
