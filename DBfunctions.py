@@ -25,11 +25,13 @@ def db_currencieslist_upp():
         for item in Rates.all_currencies_dictlist():
             # проверка на наличие записи в БД
             if len(list(filter(lambda x: x.cur_id == int(item['Cur_ID']), currencies))) == 0:
-                session.add(CurrenciesList(item['Cur_ID'], item['Cur_Name'], item['Cur_Abbreviation']))
+                session.add(
+                    CurrenciesList(item['Cur_ID'], item['Cur_Name'], item['Cur_Names'], item['Cur_Abbreviation']))
             else:
                 currency = list(filter(lambda x: x.cur_id == int(item['Cur_ID']), currencies))[0]
                 currency.cur_id = item['Cur_ID']
                 currency.cur_name = item['Cur_Name']
+                currency.cur_names = item['Cur_Names']
                 currency.cur_abbreviation = item['Cur_Abbreviation']
         session.commit()
 
@@ -68,7 +70,7 @@ def db_text(abbreviation: str) -> str:
     currency = responce[0][0]
     rate = responce[0][1]
     text = 'Аббревиатура: ' + currency.cur_abbreviation + '\n'
-    text += str(rate.cur_scale) + ' ' + currency.cur_name + ' = ' + str(rate.cur_rate) + ' BYN' + '\n'
+    text += str(rate.cur_scale) + ' ' + currency.cur_names + ' = ' + str(rate.cur_rate) + ' BYN' + '\n'
     text += 'Дата : ' + rate.cur_date.isoformat()
     return text
 
