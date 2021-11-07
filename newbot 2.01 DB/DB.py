@@ -32,15 +32,17 @@ class CurrenciesList(Base):
     id = Column(Integer, primary_key=True)
     cur_id = Column(Integer)
     cur_name = Column(String(200))
+    cur_names = Column(String(200))
     cur_abbreviation = Column(String(5))
 
-    def __init__(self, cur_id, cur_name, cur_abbreviation):
+    def __init__(self, cur_id, cur_name, cur_names, cur_abbreviation):
         self.cur_id = cur_id
         self.cur_name = cur_name
+        self.cur_names = cur_names
         self.cur_abbreviation = cur_abbreviation
 
     def __repr__(self):
-        return "<CurrenciesList('%s','%s', '%s')>" % (self.cur_id, self.cur_name, self.cur_abbreviation)
+        return "<CurrenciesList('%s','%s', '%s')>" % (self.cur_id, self.cur_name, self.cur_names, self.cur_abbreviation)
 
 
 class RatesList(Base):

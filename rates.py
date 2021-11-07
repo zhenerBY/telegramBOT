@@ -68,8 +68,9 @@ class Rates():
                         if item['Cur_ID'] == item2['Cur_ID']:
                             tempdict = {}
                             tempdict['Cur_ID'] = item2['Cur_ID']
-                            tempdict['Cur_Abbreviation'] = item2['Cur_Abbreviation']
                             tempdict['Cur_Name'] = item2['Cur_Name']
+                            tempdict['Cur_Names'] = item['Cur_Name']
+                            tempdict['Cur_Abbreviation'] = item2['Cur_Abbreviation']
                             listcurr.append(tempdict)
         return listcurr
 
